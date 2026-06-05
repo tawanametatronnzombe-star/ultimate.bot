@@ -1,0 +1,26 @@
+name: Monitor URLs & Live Deploy
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *'   # daily 2AM UTC
+
+jobs:
+  monitor_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run Monitor & Deploy Script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: python .github/scripts/monitor_urls.py

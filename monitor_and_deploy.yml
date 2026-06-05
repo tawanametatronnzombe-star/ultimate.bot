@@ -1,26 +1,22 @@
-name: Monitor URLs & Live Deploy
+name: Ultimate Monitor & Deploy
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 2 * * *'   # daily 2AM UTC
+    - cron: '0 2 * * *'
 
 jobs:
-  monitor_and_deploy:
+  ultimate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-
-      - name: Install Dependencies
+      - name: Install dependencies
         run: pip install requests beautifulsoup4
-
-      - name: Run Monitor & Deploy Script
+      - name: Run ultimate monitor
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
-        run: python .github/scripts/monitor_urls.py
+        run: python .github/scripts/ultimate_monitor.py

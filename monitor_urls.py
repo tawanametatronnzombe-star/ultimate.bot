@@ -3,11 +3,9 @@ import json
 import requests
 from bs4 import BeautifulSoup
 
-# Paths
 repo_root = os.getcwd()
 urls_file = os.path.join(repo_root, "urls.txt")
 data_file = os.path.join(repo_root, "url_data.json")
-sitemap_file = os.path.join(repo_root, "sitemap.xml")
 token = os.environ["GITHUB_TOKEN"]
 repo = os.environ["REPO"]
 
@@ -48,32 +46,7 @@ for url in urls:
 with open(data_file, "w", encoding="utf-8") as f:
     json.dump(new_data, f, indent=2)
 
-# Update sitemap.xml
-urlset = BeautifulSoup(features="xml")
-urlset.append(urlset.new_tag("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"))
-
-# Add repo HTML files
-for f in os.listdir(repo_root):
-    if f.endswith(".html"):
-        url_tag = urlset.new_tag("url")
-        loc = urlset.new_tag("loc")
-        loc.string = f"https://tawanametatronnzombe-star.github.io/Metatron878/{f}"
-        url_tag.append(loc)
-        urlset.urlset.append(url_tag)
-
-# Add monitored URLs
-for url in urls:
-    url_tag = urlset.new_tag("url")
-    loc = urlset.new_tag("loc")
-    loc.string = url
-    url_tag.append(loc)
-    urlset.urlset.append(url_tag)
-
-with open(sitemap_file, "w", encoding="utf-8") as f:
-    f.write(str(urlset.prettify()))
-print("✅ Sitemap updated.")
-
-# Create GitHub issues for changed URLs
+# Create GitHub issues for changes
 for url in changes_detected:
     issue_url = f"https://api.github.com/repos/{repo}/issues"
     data = {
@@ -87,15 +60,15 @@ for url in changes_detected:
     else:
         print(f"❌ Failed to create issue for {url}: {resp.json()}")
 
-# Auto-commit and push changes
+# Auto-commit URL data
 os.system('git config --global user.name "GitHub Actions Bot"')
 os.system('git config --global user.email "actions@github.com"')
-os.system('git add url_data.json sitemap.xml')
+os.system('git add url_data.json')
 if changes_detected:
-    os.system('git commit -m "Auto-update URL data & sitemap due to changes"')
+    os.system('git commit -m "Auto-update URL data due to changes"')
     os.system('git push')
 
-# Auto-deploy GitHub Pages (live)
+# Auto-deploy to GitHub Pages
 os.system('git branch -M main')  # ensure main branch
 os.system('git push origin main')  # push updates live
 print("✅ GitHub Pages deployed live with latest updates!")

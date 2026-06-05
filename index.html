@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metatron878 Hub</title>
+<style>
+body { font-family: Arial, sans-serif; background:#111; color:#eee; padding:2rem; }
+h1 { color:#ff4c4c; }
+a { color:#1db954; text-decoration:none; display:block; margin:0.5rem 0; }
+a:hover { text-decoration:underline; }
+.repo-box { background:#222; padding:1rem; margin:1rem 0; border-radius:8px; }
+.page-link { margin-left:1rem; }
+</style>
+</head>
+<body>
+<h1>Metatron878 Hub – All Repos & Pages</h1>
+<div id="repos"></div>
+<script>
+fetch('repos.json')
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById('repos');
+    data.forEach(repo => {
+      const repoDiv = document.createElement('div');
+      repoDiv.className = 'repo-box';
+      const title = document.createElement('h2');
+      title.textContent = repo.repo_name;
+      repoDiv.appendChild(title);
+      repo.pages.forEach(page => {
+        const link = document.createElement('a');
+        link.href = `https://tawanametatronnzombe-star.github.io/${repo.repo_name}/${page}`;
+        link.target = "_blank";
+        link.className = 'page-link';
+        link.textContent = page;
+        repoDiv.appendChild(link);
+      });
+      container.appendChild(repoDiv);
+    });
+  });
+</script>
+</body>
+</html>
